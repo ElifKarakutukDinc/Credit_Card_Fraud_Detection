@@ -1,0 +1,26 @@
+create table fraud(
+
+index bigint,
+trans_date_trans_time timestamp,
+cc_num bigint,
+merchant varchar,
+category varchar,
+amt real,
+first varchar,
+last varchar,
+gender varchar,
+street varchar,
+city varchar,
+state varchar,
+zip bigint,
+lat real,
+long real,
+city_pop bigint,
+job varchar,
+dob date,
+trans_num varchar,
+unix_time bigint,
+merch_lat real,
+merch_long real,
+is_fraud integer
+)
