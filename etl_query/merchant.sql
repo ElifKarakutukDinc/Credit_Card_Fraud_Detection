@@ -6,7 +6,7 @@ rank() over (partition by merchant order by trans_date_trans_time desc) as rank
 from fraud f), 
 
 fraud_transaction_count as (
---1)Kisinin fraud islem hareketi sayisi 
+--Fraud transaction count of Merchant
 select 
 	merchant, 
 	count(*) fraud_transaction_count
@@ -15,7 +15,7 @@ where is_fraud = 1
 group by 1), 
 
 non_fraud_transaction_count as (
---2)Kisinin fraud olmayan islem hareket sayisi
+--Non-Fraud transaction count of Merchant
 select 
 	merchant, 
 	count(*) non_fraud_transaction_count
@@ -23,7 +23,7 @@ from fraud f
 where is_fraud = 0
 group by 1),
 
---3)Kisi fraud mu? eger fraud islem hareketi >0 ise fraud degilse fraud degil
+--Are Merchants Fraud? If Fraud transaction count of Merchant >0 merchant is Fraud
 who_fraud as (
 select 
 	 merchant,
@@ -33,7 +33,7 @@ select
 from fraud f 
 group by 1),
 
---4)Kisinin hafta ici toplam islem hareketi
+--Total transaction count of merchant at weekday.
 weekday_groups_count as (
 select merchant,
  	   case 
@@ -45,7 +45,7 @@ from fraud f
 where extract(isodow from trans_date_trans_time) in (1,2,3,4,5)
 group by 1,2),
 
---5)hafta sonu toplam islem hareketi
+--Total transaction count of merchant at weekend
 weekend_groups_count as (
 select merchant,
  	   case 
@@ -57,7 +57,7 @@ from fraud f
 where extract(isodow from trans_date_trans_time) in (6,7)
 group by 1,2),
 
---6)Kisinin hafta ici toplam fraud islem hareketi 
+--Total fraud transaction count of merchant at weekday
 weekday_fraud_groups_count as (
 select merchant,
  	   case 
@@ -69,7 +69,7 @@ from fraud f
 where is_fraud=1 and extract(isodow from trans_date_trans_time) in (1,2,3,4,5)
 group by 1,2),
 
---7)haftasonu toplam fraud islem hareketi
+--Total fraud transaction count of merchant at weekend
 weekend_fraud_groups_count as (
 select merchant,
  	   case 
@@ -81,7 +81,7 @@ from fraud f
 where is_fraud=1 and extract(isodow from trans_date_trans_time) in (6,7)
 group by 1,2),
 
---8) Kisinin hafta ici toplam fraud olmayan islem hareketi
+--Total non-fraud transaction count of merchant at weekday
 weekday_non_fraud_groups_count as (
 select merchant,
  	   case 
@@ -93,7 +93,7 @@ from fraud f
 where is_fraud=0 and extract(isodow from trans_date_trans_time) in (1,2,3,4,5)
 group by 1,2),
 
---9)haftasonu toplam fraud olmayan islem hareketi
+--Total non-fraud transaction count of merchant at weekend
 weekend_non_fraud_groups_count as (
 select merchant,
  	   case 
@@ -105,7 +105,7 @@ from fraud f
 where is_fraud=0 and extract(isodow from trans_date_trans_time) in (6,7)
 group by 1,2),
 
---10)Kisinin fraud islemlerdeki toplam tutari 
+--Total fraud amount of Merchant 
 total_fraud_amount as(
 select merchant,
 sum(amt) as total_fraud_amount
@@ -113,7 +113,7 @@ from fraud f
 where is_fraud=1
 group by 1),
 
---11)Kisinin fraud olmayan islemlerdeki toplam tutari
+--Total non-fraud amount of Merchant 
 total_non_fraud_amount as(
 select merchant, 
 sum(amt) as total_non_fraud_amount
@@ -121,7 +121,7 @@ from fraud f
 where is_fraud=0
 group by 1),
 
---12) Kisinin hafta ici toplam tutari fraud islem hareketi
+--Total fraud amount of Merchant at weekday 
 total_weekday_fraud_amount as (
 select merchant,
  	   case 
@@ -133,7 +133,7 @@ from fraud f
 where is_fraud=1 and extract(isodow from trans_date_trans_time) in (1,2,3,4,5)
 group by 1,2),
 
---13)Kisinin hafta ici toplam tutari fraud olmayan islem hareketi
+--Total non-fraud amount of Merchant at weekday
 total_weekday_non_fraud_amount as (
 select merchant,
  	   case 
@@ -145,7 +145,7 @@ from fraud f
 where is_fraud=0 and extract(isodow from trans_date_trans_time) in (1,2,3,4,5)
 group by 1,2),
 
---14)Kisinin hafta sonu toplam tutari fraud islem hareketi
+--Total fraud amount of Merchant at weekend
 total_weekend_fraud_amount as (
 select merchant, 
  	   case 
@@ -157,7 +157,7 @@ from fraud f
 where is_fraud=1 and extract(isodow from trans_date_trans_time) in (6,7)
 group by 1,2),
 
---15)Kisinin hafta sonu toplam tutari fraud olmayan islem hareketi
+--Total non-fraud amount of Merchant at weekend
 total_weekend_non_fraud_amount as (
 select merchant,
  	   case 
@@ -169,14 +169,14 @@ from fraud f
 where is_fraud=0 and extract(isodow from trans_date_trans_time) in (6,7)
 group by 1,2),
 
---16)Kisinin islem yaptigi musterilerinin yani credit card holder larin yas ortalamalari
+--Avg age of credit card holders who shopping from merchant
 avg_holder_age as (
 select merchant, 
 avg(date_part('year',age(dob))) as avg_holder_age
 from fraud f 
 group by 1),
 
---17) Kisinin fraud islemlerindeki musterilerinin yani credit card holder larin yas ortalamalari 
+--Avg age of credit card holders who shopping from at fraud transactions of merchant 
 avg_holder_age_fraud as (
 select merchant, 
 avg(date_part('year',age(dob))) as avg_holder_age_fraud
@@ -184,7 +184,7 @@ from fraud f
 where is_fraud = 1 
 group by 1),
 
---18Kisinin fraud olmayan islemlerindeki  musterilerinin yani credit card holder larin yas ortalamalari
+--Avg age of credit card holders who shopping from at non-fraud transactions of merchant 
 avg_holder_age_non_fraud as (
 select merchant, 
 avg(date_part('year',age(dob))) as avg_holder_age_non_fraud
